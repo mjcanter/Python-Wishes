@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<script></script>
+<body>
+    {% for x in curr_user %}
+    <header>
+        <div id="header_container">
+                <h2>Hello, {{ x.name }}</h2>
+                <a href="/logout"><button>Log Off</button></a>
+            </div><!-- /#header_right  -->
+        </div><!-- /#header_container  -->
+    </header>
+    <div id="wrapper">
+        <div>
+            <p>Your Wish List</p>
+            {% for item in yourwl %}
+                <div>
+                    <li>{{item.item}}<form action="/selitem" method="POST">{% csrf_token %}<input type="hidden" name="selitem" value={{item.id}}><input type="submit" value="check this item"></form>{{item.added_by}}{{item.created_at}}</li>
+                        {% if item.user_id.id == x.id %}
+                            <form action="/delete" method="POST">
+                            {% csrf_token %}
+                                <input type="hidden" name="delete_this" value={{item.id}}>
+                                <input type="submit" value="delete">
+                            </form>
+                        {% else %}
+                            <form action="/removewl" method="POST">
+                            {% csrf_token %}
+                                <input type="hidden" name="unwish_this" value={{item.id}}>
+                                <input type="submit" value="remove from my Wishlist">
+                            </form>
+                        {% endif %}            
+                </div>
+            {% endfor %}
+            {% if yourwl == None %}
+                <p class="nothing">There's nothing here yet...</p>
+            {% endif %}
+        </div>
+        <div>
+            <p>Other Users' Wish List</p>
+            {% for item in notwl %}
+                <div>
+                    <li>{{item.item}}<form action="/selitem" method="POST">{% csrf_token %}<input type="hidden" name="selitem" value={{item.id}}><input type="submit" value="check this item"></form>{{item.added_by}}{{item.created_at}}</li>
+                        <form action="/wl" method="POST">
+                        {% csrf_token %}
+                            <input type="hidden" name="wish_this" value={{item.id}}>
+                            <input type="submit" value="Add to my Wishlist">
+                        </form>            
+                </div>
+            {% endfor %}
+            {% if notwl == None %}
+                <p class="nothing">There's nothing here yet...</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    <div>Or you could:</div>
+    <a href="/additem"><button>Add Item</button></a>
+</body>
+</html>
